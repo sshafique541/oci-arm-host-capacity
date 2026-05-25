@@ -1,0 +1,31 @@
+name: Oracle Cloud Auto VPS Create
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '*/15 * * * *' # Yeh har 15 minute baad automatically chalega
+
+jobs:
+  create_instance:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Set up PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.2'
+
+    - name: Install Dependencies
+      run: composer install --no-dev --prefer-dist --optimize-autoloader
+
+    - name: Run Auto Creation Script
+      run: php index.php
+      env:
+        OCI_USER_OCID: ${{ secrets.OCI_USER_OCID }}
+        OCI_TENANCY_OCID: ${{ secrets.OCI_TENANCY_OCID }}
+        OCI_FINGERPRINT: ${{ secrets.OCI_FINGERPRINT }}
+        OCI_REGION: ${{ secrets.OCI_REGION }}
+        OCI_PRIVATE_KEY: ${{ secrets.OCI_PRIVATE_KEY }}
